@@ -1,0 +1,15 @@
+div[class="container mx-auto px-4 py-8"] {
+    width: 50%;
+
+    div[class="timer-title"] {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+}
+
+@media screen and (max-width : 1024px){
+    div[class="container mx-auto px-4 py-8"] {
+        width: 100%;
+    }
+}

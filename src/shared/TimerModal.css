@@ -1,0 +1,20 @@
+input {
+    height: 35px;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 20px !important;
+    padding: 8px;
+}
+
+input.border-red-500 {
+    border: 2px solid red;
+}
+
+textarea {
+    width: 100%;
+    border: 2px solid lightgray;
+    border-radius: 5px;
+    font-size: 18px !important;
+    padding: 8px !important;
+}

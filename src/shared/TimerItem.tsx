@@ -4,10 +4,12 @@ import { Timer } from '../types/timer';
 import { formatTime } from '../utils/time';
 import { useTimerStore } from '../store/useTimerStore';
 import { toast } from 'sonner';
-import { EditTimerModal } from './EditTimerModal';
+import { EditTimerModal } from '../components/EditTimerModal';
 import { TimerAudio } from '../utils/audio';
-import { TimerControls } from './TimerControls';
-import { TimerProgress } from './TimerProgress';
+import { TimerControls } from '../components/TimerControls';
+import { TimerProgress } from '../components/TimerProgress';
+import { useDeviceType } from '../utils/deviceType';
+import { ModalButton } from './ModalButton';
 
 interface TimerItemProps {
   timer: Timer;
@@ -16,6 +18,7 @@ interface TimerItemProps {
 export const TimerItem: React.FC<TimerItemProps> = ({ timer }) => {
   const { toggleTimer, deleteTimer, updateTimer, restartTimer } = useTimerStore();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const deviceType = useDeviceType();
   const intervalRef = useRef<number | null>(null);
   const timerAudio = TimerAudio.getInstance();
   const hasEndedRef = useRef(false);
@@ -27,14 +30,23 @@ export const TimerItem: React.FC<TimerItemProps> = ({ timer }) => {
         
         if (timer.remainingTime <= 1 && !hasEndedRef.current) {
           hasEndedRef.current = true;
-          timerAudio.play().catch(console.error);
+          let audioPlay = setInterval(() => {
+            timerAudio.play().catch(console.error)
+          },1000);
           
           toast.success(`Timer "${timer.title}" has ended!`, {
+            position: deviceType === 'mobile' ? 'bottom-center' : deviceType === 'desktop' ? 'top-right' : 'top-center',
             duration: 5000,
             action: {
               label: 'Dismiss',
-              onClick: timerAudio.stop,
+              onClick: () => {
+                timerAudio.stop;
+                clearInterval(audioPlay);
+              },
             },
+            onAutoClose: () => {
+              clearInterval(audioPlay);
+            }
           });
         }
       }, 1000);
@@ -82,27 +94,27 @@ export const TimerItem: React.FC<TimerItemProps> = ({ timer }) => {
               <p className="text-gray-600 mt-1">{timer.description}</p>
             </div>
             <div className="flex gap-2">
-              <button
+              <ModalButton
                 onClick={() => setIsEditModalOpen(true)}
                 className="p-2 rounded-full hover:bg-blue-50 text-blue-500 transition-colors"
                 title="Edit Timer"
               >
                 <Pencil className="w-5 h-5" />
-              </button>
-              <button
+              </ModalButton>
+              <ModalButton
                 onClick={handleRestart}
                 className="p-2 rounded-full hover:bg-blue-50 text-blue-500 transition-colors"
                 title="Restart Timer"
               >
                 <RotateCcw className="w-5 h-5" />
-              </button>
-              <button
+              </ModalButton>
+              <ModalButton
                 onClick={handleDelete}
                 className="p-2 rounded-full hover:bg-red-50 text-red-500 transition-colors"
                 title="Delete Timer"
               >
                 <Trash2 className="w-5 h-5" />
-              </button>
+              </ModalButton>
             </div>
           </div>
           <div className="flex flex-col items-center mt-6">
@@ -117,7 +129,6 @@ export const TimerItem: React.FC<TimerItemProps> = ({ timer }) => {
             <TimerControls
               isRunning={timer.isRunning}
               remainingTime={timer.remainingTime}
-              duration={timer.duration}
               onToggle={handleToggle}
               onRestart={handleRestart}
             />

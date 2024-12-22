@@ -1,10 +1,10 @@
 import React from 'react';
 import { Play, Pause, RotateCcw } from 'lucide-react';
+import { ModalButton } from '../shared/ModalButton';
 
 interface TimerControlsProps {
   isRunning: boolean;
   remainingTime: number;
-  duration: number;
   onToggle: () => void;
   onRestart: () => void;
 }
@@ -12,7 +12,6 @@ interface TimerControlsProps {
 export const TimerControls: React.FC<TimerControlsProps> = ({
   isRunning,
   remainingTime,
-  duration,
   onToggle,
   onRestart,
 }) => {
@@ -20,18 +19,18 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
   
   if (isCompleted) {
     return (
-      <button
+      <ModalButton
         onClick={onRestart}
         className="p-3 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
         title="Restart Timer"
       >
         <RotateCcw className="w-6 h-6" />
-      </button>
+      </ModalButton>
     );
   }
 
   return (
-    <button
+    <ModalButton
       onClick={onToggle}
       className={`p-3 rounded-full transition-colors ${
         isRunning
@@ -45,6 +44,6 @@ export const TimerControls: React.FC<TimerControlsProps> = ({
       ) : (
         <Play className="w-6 h-6" />
       )}
-    </button>
+    </ModalButton>
   );
 };
